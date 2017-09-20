@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.saltedfish.blog.dao.api.IInformationDao">
+	<select id="getInfo" resultType="com.saltedfish.blog.pojo.Information">
+		SELECT info_id, user_id, nick_name, real_name, birthday, email, qq, mobile 
+		FROM usr.information 
+		WHERE user_id = #{user_id}
+	</select>
+</mapper>

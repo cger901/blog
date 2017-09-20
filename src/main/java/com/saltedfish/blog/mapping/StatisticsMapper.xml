@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.saltedfish.blog.dao.api.IStatisticsDao">
+	<select id="getStatistics" resultType="com.saltedfish.blog.pojo.Statistics">
+		SELECT statistics_id, article_id, visit_count 
+		FROM blog.statistics 
+		WHERE article_id = #{article_id}
+	</select>
+	<insert id="appendStatistics" parameterType="com.saltedfish.blog.pojo.Statistics">
+		INSERT INTO blog.statistics 
+		VALUES(#{statistics_id}, #{article_id}, #{visit_count})
+	</insert>
+</mapper>
