@@ -19,6 +19,7 @@
 		})
 	})
 	function getArticle(articleId) {
+		$("#content").text("查询中，请稍候……");
 		$.ajax({
 			url : "read.sf",
 			data : {

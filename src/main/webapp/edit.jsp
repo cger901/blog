@@ -31,7 +31,6 @@
 		<c:if test="${article!=null&&article.bold}">checked="checked"</c:if> />加粗
 	<input type="checkbox" name="top"
 		<c:if test="${article!=null&&article.top}">checked="checked"</c:if> />置顶
-	<button>编辑/隐藏</button>
 	<script id="editor" name="content" type="text/plain">${article.contents}</script>
 	<div id="btns">
 		<button id="commit">保存提交并修改</button>
@@ -70,16 +69,16 @@
 					setEnabled();
 				} else
 					alert("正文不能为空！");
-			});
-		});
+			})
+		})
 		function setDisabled() {
 			UE.getEditor('editor').setDisabled('fullscreen');
 			disableBtn("enable");
-		};
+		}
 		function setEnabled() {
 			UE.getEditor('editor').setEnabled();
 			enableBtn();
-		};
+		}
 		function disableBtn(str) {
 			var div = document.getElementById('btns');
 			var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
@@ -90,14 +89,14 @@
 					btn.setAttribute("disabled", "true");
 				}
 			}
-		};
+		}
 		function enableBtn() {
 			var div = document.getElementById('btns');
 			var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
 			for (var i = 0, btn; btn = btns[i++];) {
 				UE.dom.domUtils.removeAttributes(btn, [ "disabled" ]);
 			}
-		};
+		}
 	</script>
 </body>
 </html>
