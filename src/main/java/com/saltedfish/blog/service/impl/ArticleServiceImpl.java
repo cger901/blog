@@ -184,15 +184,43 @@ public class ArticleServiceImpl implements IArticleService {
 	}
 
 	@Override
-	public boolean newArticle(ArticleVo article) {
-		// TODO Auto-generated method stub
-		return false;
+	public long newArticle(ArticleVo article) {
+		long result = 0;
+		if (article != null) {
+			Article newArticle = new Article();
+			newArticle.setArticle_id(article.getArticle_id());
+			newArticle.setCategory_id(article.getCategory_id());
+			newArticle.setUser_id(article.getAuthor_id());
+			newArticle.setArticle_type(article.getArticle_type());
+			newArticle.setTitle(article.getTitle());
+			newArticle.setContents(article.getContents());
+			newArticle.setIs_open(article.isOpen()? 1: 0);
+			newArticle.setIs_bold(article.isBold()? 1: 0);
+			newArticle.setIs_top(article.isTop()? 1: 0);
+			if (articleDao.insertArticle(newArticle)) {
+				result = newArticle.getArticle_id();
+			}
+		}
+		return result;
 	}
 
 	@Override
-	public boolean updateArticle(ArticleVo artcle) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean updateArticle(ArticleVo article) {
+		boolean response = false;
+		if (article != null) {
+			Article theArticle = new Article();
+			theArticle.setArticle_id(article.getArticle_id());
+			theArticle.setCategory_id(article.getCategory_id());
+			theArticle.setUser_id(article.getAuthor_id());
+			theArticle.setArticle_type(article.getArticle_type());
+			theArticle.setTitle(article.getTitle());
+			theArticle.setContents(article.getContents());
+			theArticle.setIs_open(article.isOpen()? 1: 0);
+			theArticle.setIs_bold(article.isBold()? 1: 0);
+			theArticle.setIs_top(article.isTop()? 1: 0);
+			response = articleDao.updateArticle(theArticle);
+		}
+		return response;
 	}
 
 }

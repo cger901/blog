@@ -4,7 +4,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 <mapper namespace="com.saltedfish.blog.dao.api.IArticleDao">
 	<select id="getListByUID" resultType="com.saltedfish.blog.pojo.Article">
-		SELECT article_id, category_id, user_id, article_type, title,
+		SELECT article_id, category_id, article_type, user_id, title,
 		contents, is_open, is_bold, is_top, is_deleted, create_time,
 		update_time
 		FROM blog.article
@@ -12,10 +12,24 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		<if test="is_open==1"> AND is_open = #{is_open}</if>
 	</select>
 	<select id="getArticle" resultType="com.saltedfish.blog.pojo.Article">
-		SELECT article_id, category_id, user_id, article_type, title,
+		SELECT article_id, category_id, article_type, user_id, title,
 		contents, is_open, is_bold, is_top, is_deleted, create_time,
 		update_time
 		FROM blog.article
 		WHERE article_id = #{article_id}
 	</select>
+	<insert id="insertArticle" parameterType="com.saltedfish.blog.pojo.Article">
+		INSERT INTO blog.article(category_id, article_type, user_id, title,
+		contents, is_open, is_bold, is_top)
+		VALUES(#{category_id},#{article_type},#{user_id},#{title},#{contents},#{is_open},#{is_bold},#{is_top})
+		<selectKey resultType="Integer" order="AFTER" keyProperty="article_id">
+			SELECT LAST_INSERT_ID() AS article_id
+		</selectKey>
+	</insert>
+	<update id="updateArticle" parameterType="com.saltedfish.blog.pojo.Article">
+		UPDATE blog.article
+		SET category_id = #{category_id},article_type = #{article_type},title = #{title},contents = #{contents},
+		is_open = #{is_open},is_bold = #{is_bold},is_top = #{is_top}
+		WHERE article_id = #{article_id} AND user_id = #{user_id}
+	</update>
 </mapper>

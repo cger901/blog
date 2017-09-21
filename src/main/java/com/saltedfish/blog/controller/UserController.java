@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.saltedfish.blog.common.Const;
 import com.saltedfish.blog.service.api.IUserService;
 import com.saltedfish.blog.vo.UserVo;
 
@@ -22,14 +23,14 @@ public class UserController {
 	@ResponseBody
 	public boolean login(String username, String password) {
 		UserVo user = userService.login(username, password);
-		if (user!=null) session.setAttribute("user", user);
+		if (user!=null) session.setAttribute(Const.CURRENT_USER, user);
 		return user!=null? true: false;
 	}
 	
 	@RequestMapping(value = "logout")
 	public String logout() {
-		if (session.getAttribute("user") != null) {
-			session.removeAttribute("user");
+		if (session.getAttribute(Const.CURRENT_USER) != null) {
+			session.removeAttribute(Const.CURRENT_USER);
 		}
 		return "index";
 	}

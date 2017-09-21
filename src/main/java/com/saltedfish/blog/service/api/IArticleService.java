@@ -35,9 +35,9 @@ public interface IArticleService {
 	 * @param article 待添加的文章
 	 * @return 返回操作结果：添加成功返回true/添加失败返回false
 	 */
-	boolean newArticle(ArticleVo article);
+	long newArticle(ArticleVo article);
 	
-	boolean updateArticle(ArticleVo artcle);
+	boolean updateArticle(ArticleVo article);
 	
 	
 	

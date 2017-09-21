@@ -26,7 +26,7 @@
 	<input type="radio" name="open" value="false"
 		<c:if test="${article!=null||article.open==false}">checked="checked"</c:if> />保密
 	<select title="类别" name="category_id"><option value="1">未分类</option></select>
-	<input type="text" name="article_type" value="${article.article_type}"/>
+	<input type="text" name="article_type" value="${article.article_type}" />
 	<input type="checkbox" name="bold"
 		<c:if test="${article!=null&&article.bold}">checked="checked"</c:if> />加粗
 	<input type="checkbox" name="top"
@@ -49,7 +49,7 @@
 							article_id : <c:choose><c:when test="${article!=null}">${article.article_id}</c:when><c:otherwise>0</c:otherwise></c:choose>,
 							category_id : $("select").val(),
 							article_type : $("input[name='article_type']").val(),
-							author_id : <c:choose><c:when test="${article!=null}">${article.author_id}</c:when><c:otherwise>0</c:otherwise></c:choose>,
+							author_id : <c:choose><c:when test="${user!=null}">${user.user_id}</c:when><c:otherwise>0</c:otherwise></c:choose>,
 							title : $("input[name='title']").val(),
 							open : $("input[name='open']:checked").val(),
 							bold : $("input[name='bold']").prop('checked'),
@@ -57,12 +57,11 @@
 							contents : UE.getEditor('editor').getContent()
 						},
 						success : function(result) {
-							if (result == null) {
-								$("#content").text("文章不存在或已经删除！");
-							} else if (result.contents == null) {
-								$("#content").text("您的访问权限不足！");
+							if (result == 0) {
+								alert("提交失败！");
 							} else {
-								$("#content").text(result.contents);
+								alert("文章编号：" + result + "，提交成功！");
+								window.location.href = "getarticlelist.sf?target_id=" + <c:choose><c:when test="${user!=null}">${user.user_id}</c:when><c:otherwise>0</c:otherwise></c:choose>;
 							}
 						}
 					})

@@ -13,5 +13,9 @@ public interface IArticleDao {
 	List<Article> getListByUID(@Param("user_id") long user_id, @Param("is_open") int is_open);
 
 	Article getArticle(@Param("article_id") long article_id);
+
+	boolean insertArticle(Article newArticle);
+	
+	boolean updateArticle(Article article);
 	
 }
