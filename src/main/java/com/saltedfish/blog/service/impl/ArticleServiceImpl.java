@@ -48,11 +48,13 @@ public class ArticleServiceImpl implements IArticleService {
 			result.setCategory_name(category.getCategory_name());
 			result.setArticle_type(article.getArticle_type());
 			result.setTitle(article.getTitle());
-			result.setEditer_name(information.getNick_name());
+			result.setAuthor_id(information.getUser_id());
+			result.setAuthor_name(information.getNick_name());
 			result.setContents(article.getContents());
-			result.setIs_top(article.getIs_top()==1? true: false);
-			result.setIs_bold(article.getIs_bold()==1? true: false);
-			result.setCount(statistics.getVisit_count());
+			result.setOpen(article.getIs_open()==1? true: false);
+			result.setTop(article.getIs_top()==1? true: false);
+			result.setBold(article.getIs_bold()==1? true: false);
+			result.setVisit_count(statistics.getVisit_count());
 			result.setCreate_time(article.getCreate_time());
 			result.setUpdate_time(article.getUpdate_time());
 		}
@@ -76,9 +78,11 @@ public class ArticleServiceImpl implements IArticleService {
 			result.setCategory_name(category.getCategory_name());
 			result.setArticle_type(article.getArticle_type());
 			result.setTitle(article.getTitle());
-			result.setEditer_name(information.getNick_name());
-			result.setIs_top(article.getIs_top()==1? true: false);
-			result.setIs_bold(article.getIs_bold()==1? true: false);
+			result.setAuthor_id(article.getUser_id());
+			result.setAuthor_name(information.getNick_name());
+			result.setOpen(article.getIs_open()==1? true: false);
+			result.setBold(article.getIs_bold()==1? true: false);
+			result.setTop(article.getIs_top()==1? true: false);
 			// 若当前文章没有统计信息，则为其创建一条新统计
 			if (statistics==null || statistics.getArticle_id()!= article.getArticle_id()) {
 				statistics = new Statistics();
@@ -88,7 +92,7 @@ public class ArticleServiceImpl implements IArticleService {
 				statisticsDao.appendStatistics(statistics);
 				System.out.println("为文章编号" + article.getArticle_id() + "自动创建了一条新统计" + statistics);
 			}
-			result.setCount(statistics.getVisit_count());
+			result.setVisit_count(statistics.getVisit_count());
 			result.setCreate_time(article.getCreate_time());
 			result.setUpdate_time(article.getUpdate_time());
 		}
@@ -103,6 +107,9 @@ public class ArticleServiceImpl implements IArticleService {
 		Statistics statistics = statisticsDao.getStatistics(article_id);
 		if (statistics!=null) {
 			statistics.setVisit_count(statistics.getVisit_count() + 1);
+			if (statisticsDao.modifyStatistics(statistics)) {
+				System.out.println("文章" + article_id + "的访问次数+1");
+			}
 		}
 	}
 
@@ -118,40 +125,62 @@ public class ArticleServiceImpl implements IArticleService {
 			long article_id = article.getArticle_id();
 			Category category = categoryDao.getCategory(article.getCategory_id());
 			Statistics statistics = statisticsDao.getStatistics(article_id);
-			response.add(getTitleVo(category, article, statistics, information));
+			TitleVo title = getTitleVo(category, article, statistics, information);
+			if (title.isTop() && !response.isEmpty()) {
+				for (int t = 0; t < response.size(); t++) {
+					long t_id = response.get(t).getArticle_id();
+					if (response.get(t).isTop() && t_id > article_id) {
+						response.add(t, title);
+					}
+				}
+				if (!response.contains(title)) {
+					response.add(0, title);
+				}
+			}
+			else response.add(title);
 		}
 		return response;
 	}
 
 	@Override
 	public ArticleVo getArticle(long article_id) {
-		ArticleVo response = null;
-		// 获取文章
-		if (article_id > 0) {
-			Article article = articleDao.getArticle(article_id);
-			Category category = categoryDao.getCategory(article.getCategory_id());
-			Statistics statistics = statisticsDao.getStatistics(article_id);
-			// 若当前文章没有统计信息，则为其创建一条新统计
-			if (statistics==null || statistics.getArticle_id()!= article.getArticle_id()) {
-				statistics = new Statistics();
-				statistics.setStatistics_id(0);
-				statistics.setArticle_id(article.getArticle_id());
-				statistics.setVisit_count(0);
-				statisticsDao.appendStatistics(statistics);
-				System.out.println("为文章编号" + article.getArticle_id() + "自动创建了一条新统计" + statistics);
-			}
-			Information information = informationDao.getInfo(article.getUser_id());
-			response = getArticleVo(category, article, statistics, information);
-		}
-		// 更新访问次数
-		visitArticle(article_id);
-		return response;
+		// 访问用户编号默认值0
+		return getArticle(article_id, 0);
 	}
 
 	@Override
 	public ArticleVo getArticle(long article_id, long user_id) {
-		// TODO Auto-generated method stub
-		return null;
+		ArticleVo response = null;
+		// 获取文章
+		if (article_id > 0) {
+			Article article = articleDao.getArticle(article_id);
+			if (article != null) {
+				long uid = article.getUser_id();
+				Category category = categoryDao.getCategory(article.getCategory_id());
+				Statistics statistics = statisticsDao.getStatistics(article_id);
+				// 若当前文章没有统计信息，则为其创建一条新统计
+				if (statistics==null || statistics.getArticle_id()!= article.getArticle_id()) {
+					statistics = new Statistics();
+					statistics.setStatistics_id(0);
+					statistics.setArticle_id(article.getArticle_id());
+					statistics.setVisit_count(0);
+					statisticsDao.appendStatistics(statistics);
+					System.out.println("为文章编号" + article.getArticle_id() + "自动创建了一条新统计" + statistics);
+				}
+				Information information = informationDao.getInfo(article.getUser_id());
+				response = getArticleVo(category, article, statistics, information);
+				// 判断用户对文章的所有权，或该文章为公共访问权限
+				if ((user_id > 0 && user_id == uid && article.getIs_open() == 0) || article.getIs_open() == 1) {
+					// 更新访问次数
+					if (user_id != uid) visitArticle(article_id);
+				}
+				else {
+					// 权限不足时，返回文章对象的正文置null
+					response.setContents(null);
+				}
+			}
+		}
+		return response;
 	}
 
 	@Override

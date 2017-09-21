@@ -18,7 +18,7 @@ public interface IArticleService {
 	/**
 	 * 根据文章编号获取文章
 	 * @param article_id 目标文章编号
-	 * @return 返回操作结果：获取成功返回查询到的文章实体/获取失败（文章不存在返回null）/获取失败（权限不足返回标题为null的文章实体）
+	 * @return 返回操作结果：获取成功返回查询到的文章实体/获取失败（文章不存在返回null）/获取失败（权限不足返回内容为null的文章实体）
 	 */
 	ArticleVo getArticle(long article_id);
 	
@@ -26,7 +26,7 @@ public interface IArticleService {
 	 * 根据文章编号和用户编号获取文章
 	 * @param article_id 目标文章编号
 	 * @param user_id 查询用户编号
-	 * @return 返回操作结果：获取成功返回查询到的文章实体/获取失败（文章不存在返回null）/获取失败（权限不足返回标题为null的文章实体）
+	 * @return 返回操作结果：获取成功返回查询到的文章实体/获取失败（文章不存在返回null）/获取失败（权限不足返回内容为null的文章实体）
 	 */
 	ArticleVo getArticle(long article_id, long user_id);
 	

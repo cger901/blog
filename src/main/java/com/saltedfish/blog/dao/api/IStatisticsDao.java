@@ -12,4 +12,6 @@ public interface IStatisticsDao {
 
 	boolean appendStatistics(Statistics statistics);
 
+	boolean modifyStatistics(Statistics statistics);
+
 }

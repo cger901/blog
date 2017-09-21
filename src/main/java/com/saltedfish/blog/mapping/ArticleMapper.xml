@@ -11,4 +11,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		WHERE user_id = #{user_id}
 		<if test="is_open==1"> AND is_open = #{is_open}</if>
 	</select>
+	<select id="getArticle" resultType="com.saltedfish.blog.pojo.Article">
+		SELECT article_id, category_id, user_id, article_type, title,
+		contents, is_open, is_bold, is_top, is_deleted, create_time,
+		update_time
+		FROM blog.article
+		WHERE article_id = #{article_id}
+	</select>
 </mapper>
