@@ -44,7 +44,9 @@
 <body>
 	当前登录用户：
 	<c:choose>
-		<c:when test="${user!=null}">${user.nick_name} <a href="logout.sf">注销</a></c:when>
+		<c:when test="${user!=null}">${user.nick_name} <a
+				href="logout.sf">注销</a>
+		</c:when>
 		<c:otherwise>
 			<a href="login.jsp">登录</a>
 		</c:otherwise>
@@ -70,12 +72,16 @@
 						<tr>
 							<td>${title.category_name}</td>
 							<td>${title.article_type}</td>
-							<td><c:if test="${title.bold}">
-									<b>
-								</c:if> <a href="javascript:getArticle(${title.article_id})">${title.title}</a></td>
-							<c:if test="${title.bold}">
-								</b>
-							</c:if>
+							<td>
+								<c:choose>
+									<c:when test="${title.bold}">
+										<b><a href="javascript:getArticle(${title.article_id})">${title.title}</a></b>
+									</c:when>
+									<c:otherwise>
+										<a href="javascript:getArticle(${title.article_id})">${title.title}</a>
+									</c:otherwise>
+								</c:choose>
+							</td>
 							<td>${title.author_name}</td>
 							<td>${title.visit_count}</td>
 							<c:if test="${user!=null && user.user_id==title.author_id}">
